@@ -1,0 +1,23 @@
+﻿@page
+@model SinalRAssignment.Pages.LoginModel
+@{
+}
+
+<h2 style="text-align: center;">Login Page</h2>
+
+<form method="post" class="login-form">
+    <div class="form-group">
+        <label for="username" class="form-label">Username:</label>
+        <input type="text" id="username" name="username" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" id="password" name="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Log in</button>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <p style="color:red">@TempData["ErrorMessage"]</p>
+    }
+</form>
+

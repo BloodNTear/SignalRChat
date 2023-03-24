@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SinalRAssignment", "SinalRAssignment\SinalRAssignment.csproj", "{1E7FA92A-0C2D-4761-BD1D-1B72E20B26E8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{AB5B330F-52FB-4E0B-94C6-2E642A723F25}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E7FA92A-0C2D-4761-BD1D-1B72E20B26E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E7FA92A-0C2D-4761-BD1D-1B72E20B26E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E7FA92A-0C2D-4761-BD1D-1B72E20B26E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E7FA92A-0C2D-4761-BD1D-1B72E20B26E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB5B330F-52FB-4E0B-94C6-2E642A723F25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB5B330F-52FB-4E0B-94C6-2E642A723F25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB5B330F-52FB-4E0B-94C6-2E642A723F25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB5B330F-52FB-4E0B-94C6-2E642A723F25}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0B219A5-275D-46E8-85DF-E88B39D4CE4C}
+	EndGlobalSection
+EndGlobal
