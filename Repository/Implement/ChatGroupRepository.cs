@@ -12,8 +12,12 @@ namespace Repository.Implement
     public class ChatGroupRepository : IChatGroupRepository
     {
         private DbSet<ChatGroup> _dbSet;
+        private DbSet<Account> _users;
+        private SignalRDBContext _context;
         public ChatGroupRepository(SignalRDBContext context) {
-            _dbSet = context.chatGroups;
+            _context = context;
+            _dbSet = _context.chatGroups;
+            _users = _context.accounts;
         }    
         public bool AddChatGroup(ChatGroup chatGroup)
         {
@@ -22,15 +26,39 @@ namespace Repository.Implement
 
 		public bool AddChatGroup(string groupName)
 		{
-			throw new NotImplementedException();
+			ChatGroup newGroup = new ChatGroup();
+            
+            newGroup.ChatGroupID = Guid.NewGuid();
+            newGroup.Accounts = new List<Account>();
+
+            Account admin = _users.FirstOrDefault(acc => acc.Role == Account.AccountRole.Admin);
+            
+            if (admin != null)
+            {
+                newGroup.Accounts.Add(admin);
+            }
+
+            _dbSet.Add(newGroup);
+            
+            var rowAffected = _context.SaveChanges();
+
+            return true;
 		}
 
-		public bool AddMember(ChatGroup group, Account member)
-        {
-            throw new NotImplementedException();
-        }
+		public bool AddMember(string groupName, string userID)
+		{
+			ChatGroup target = GetChatGroupByName(groupName);
 
-        public List<ChatGroup> GetAllGroups(Account user)
+            Account newUser = GetUserById(Guid.Parse(userID));
+            if (newUser != null)
+            {
+                target.Accounts.Add(newUser);
+            }
+            _dbSet.Update(target);
+            return _context.SaveChanges() > 0;
+		}
+
+		public List<ChatGroup> GetAllGroups(Account user)
         {
             List<ChatGroup> chatGroups = new List<ChatGroup>();
 
@@ -56,9 +84,22 @@ namespace Repository.Implement
             return _dbSet.Include(group => group.Messages).Include(group => group.Accounts).FirstOrDefault(group => group.GroupName.Equals(name));
 		}
 
-		public bool RemoveMember(Account admin, ChatGroup group, Account member)
+		public bool RemoveMember(string groupName, string UserID)
+		{
+			ChatGroup target = GetChatGroupByName(groupName);
+
+            Account member = GetUserById(Guid.Parse(UserID));
+			if (member != null && target.Accounts.Contains(member))
+			{
+				target.Accounts.Remove(member);
+			}
+			_dbSet.Update(target);
+			return _context.SaveChanges() > 0;
+		}
+
+        private Account GetUserById(Guid userID)
         {
-            throw new NotImplementedException();
-        }
-    }
+			return _users.FirstOrDefault(acc => acc.UserID.Equals(userID));
+		}
+	}
 }

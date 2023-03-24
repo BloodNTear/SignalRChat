@@ -8,13 +8,16 @@
 		<div class="col-md-3">
 			<h3>Chat Groups</h3>
 
-			<ul class="list-group" id="userGroup"></ul>
+			<ul class="list-group" id="userGroup">
+				<li class="list-group-item" onclick="showAddGroupModal()"
+					style="@(Model.User.Role == Repository.Entities.Account.AccountRole.Admin ? "" : "visibility:hidden")">Add new group</li>
+			</ul>
 
 		</div>
 		<div class="col-md-9">
 
-			<div class="d-flex justify-content-end">
-				<button type="button" class="btn btn-outline-primary" id="settings-button">
+			<div class="d-flex justify-content-end" style="@(Model.User.Role == Repository.Entities.Account.AccountRole.Admin ? "" : "visibility:hidden")">
+				<button type="button" class="btn btn-outline-primary" id="settings-button" >
 					<i class="bi bi-gear">Settings</i>
 				</button>
 			</div>
@@ -99,6 +102,19 @@
 			}
 		});
 
+		var selectedOptionText = "";
+		var options = newMemberSelect.options;
+		for (var i = 0; i < options.length; i++) {
+			if (options[i].value === selectedValue) {
+				selectedOptionText = options[i].text;
+				break;
+			}
+		}
+
+		connection.invoke("AddMember", currentGroup.groupName, selectedOptionText).catch(function (err) {
+			console.error(err.toString());
+		});
+
 		reloadPage();
 	}
 
@@ -126,6 +142,19 @@
 			}
 		});
 
+		var selectedOptionText = "";
+		var options = newMemberSelect.options;
+		for (var i = 0; i < options.length; i++) {
+			if (options[i].value === selectedValue) {
+				selectedOptionText = options[i].text;
+				break;
+			}
+		}
+
+		connection.invoke("RemoveMember", currentGroup.groupName, selectedOptionText).catch(function (err) {
+			console.error(err.toString());
+		});
+
 		reloadPage();
 	}
 
@@ -136,13 +165,13 @@
 
 @*Modal Dialog Script*@
 <script>
-  // Define the function that shows the modal dialog
-  function showSettingsModal() {
-    // Clear the options of the combo boxes
-    document.getElementById("new-member-combobox").innerHTML = '<option value="">Select a member to add</option>';
-    document.getElementById("remove-member-combobox").innerHTML = '<option value="">Select a member to remove</option>';
+	// Define the function that shows the modal dialog
+	function showSettingsModal() {
+		// Clear the options of the combo boxes
+		document.getElementById("new-member-combobox").innerHTML = '<option value="">Select a member to add</option>';
+		document.getElementById("remove-member-combobox").innerHTML = '<option value="">Select a member to remove</option>';
 
-	//Get options for add User
+		//Get options for add User
 		$.ajax({
 			url: "/Dashboard?handler=AvailableUsers",
 			data: { groupName: currentGroup.groupName }, // Replace with the actual group name
@@ -168,7 +197,7 @@
 				alert("Error: " + errorThrown);
 			}
 		});
-	//Get options for remove User
+		//Get options for remove User
 		$.ajax({
 			url: "/Dashboard?handler=GroupUsers",
 			data: { groupName: currentGroup.groupName }, // Replace with the actual group name
@@ -195,14 +224,99 @@
 			}
 		});
 
-    // Show the modal dialog
-    var modal = new bootstrap.Modal(document.getElementById("settings-modal"), {});
-    modal.show();
-  }
-  // Register the click event of the "Settings" button
-  document.getElementById("settings-button").addEventListener("click", showSettingsModal);
-  document.getElementById("add-member-button").addEventListener("click", addMember);
-  document.getElementById("remove-member-button").addEventListener("click", removeMember);
+		// Show the modal dialog
+		var modal = new bootstrap.Modal(document.getElementById("settings-modal"), {});
+		modal.show();
+	}
+	// Register the click event of the "Settings" button
+	document.getElementById("settings-button").addEventListener("click", showSettingsModal);
+	document.getElementById("add-member-button").addEventListener("click", addMember);
+	document.getElementById("remove-member-button").addEventListener("click", removeMember);
+</script>
+
+@*Add new group Modal*@
+<div class="modal fade" id="addGroupModal" tabindex="-1" aria-labelledby="addGroupModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="addGroupModalLabel">Add New Group</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="mb-3">
+						<label for="groupName" class="form-label">Group Name:</label>
+						<input type="text" class="form-control" id="groupName" name="groupName" minlength="3">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" id="addButton">Add</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelButton">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@*Add new group handler*@
+<script>
+	// Get the modal element
+	var modalAddGroup = document.getElementById("addGroupModal");
+
+	// Get the add button
+	var addButton = modalAddGroup.querySelector("#addButton");
+
+	// Get the input element
+	var groupNameInput = modalAddGroup.querySelector("#groupName");
+
+	// Function to show the modal
+	function showAddGroupModal() {
+		var bootstrapModal = new bootstrap.Modal(modalAddGroup);
+		bootstrapModal.show();
+	}
+
+	// Function to hide the modal
+	function hideAddGroupModal() {
+		var bootstrapModal = new bootstrap.Modal(modal);
+		bootstrapModal.hide();
+	}
+
+	// Add event listeners to the buttons
+	addButton.addEventListener("click", function () {
+		
+		if (groupNameInput.value.length >= 3) {
+
+			$.ajax({
+				url: "/Dashboard?handler=AddNewGroup",
+				data: {
+					groupName: groupNameInput.value
+				},
+				type: "GET",
+				dataType: "json",
+				success: function (response) {
+					if (response.status) {
+						alert("Add Successfully");
+					} else {
+						alert("Error: " + response.errorMessage);
+					}
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					alert("Error: " + errorThrown);
+				}
+			});
+
+			reloadPage();
+		} else {
+			alert("Please enter a group name with at least 3 characters.");
+		}
+	});
+
+	// Add event listeners to the modal
+	modalAddGroup.addEventListener("hidden.bs.modal", function () {
+		// Reset the input value when the modal is closed
+		groupNameInput.value = "";
+	});
+
 </script>
 
 @*Signal R Connection*@
@@ -230,6 +344,16 @@
 			console.error(err.toString());
 		});
 	}
+
+	connection.on("NewMemberJoined", function (memberName) {
+		alert("Admin has added " + memberName + " to this chat");
+		reloadPage()
+	});
+
+	connection.on("MemberRemoved", function (memberName) {
+		alert("Admin has removed " + memberName + " from this chat");
+		reloadPage()
+	});
 
 	function sendGroupMessage(user, message, groupName) {
 
@@ -357,7 +481,7 @@
 			url: "/Dashboard?handler=GroupMessages",
 			type: "GET",
 			data: {
-				groupName : currentGroup.groupName
+				groupName: currentGroup.groupName
 			},
 			success: function (result) {
 				if (result.status) {
@@ -378,7 +502,7 @@
 						messageRow.append(usernameDiv).append(messageDiv);
 						$('#messages-container').append(messageRow);
 					});
-				}else{
+				} else {
 					alert(result.errorMessage);
 				}
 			},

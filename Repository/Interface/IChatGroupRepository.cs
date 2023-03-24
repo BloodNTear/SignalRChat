@@ -9,8 +9,8 @@ namespace Repository.Interface
 {
 	public interface IChatGroupRepository
 	{
-		bool AddMember(ChatGroup group, Account member);
-		bool RemoveMember(Account admin, ChatGroup group, Account member);
+		bool AddMember(string groupName, string userID);
+		bool RemoveMember(string groupName, string UserID);
 		bool AddChatGroup(ChatGroup chatGroup);
 		List<ChatGroup> GetAllGroups(Account user);
 		ChatGroup GetChatGroupByName(string name);

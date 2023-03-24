@@ -15,7 +15,7 @@ namespace Repository.Implement
         private DbSet<Message> _dbSet;
         public MessageRepository(SignalRDBContext context) {
             _context = context;
-            _dbSet = context.messages;
+            _dbSet = _context.messages;
         }
         public bool SendMessage(string message, Account from, ChatGroup to)
         {

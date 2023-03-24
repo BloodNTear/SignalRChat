@@ -129,6 +129,13 @@ namespace SinalRAssignment.Pages
 			bool status = true;
 			string errorMessage = string.Empty;
 
+            status = _chatGroups.AddMember(groupName, userId);
+
+            if (!status)
+            {
+                errorMessage = "There was an error on adding member";
+            }
+
 			return new JsonResult(new
 			{
 				status = status,
@@ -140,12 +147,37 @@ namespace SinalRAssignment.Pages
 			bool status = true;
 			string errorMessage = string.Empty;
 
+			status = _chatGroups.RemoveMember(groupName, userId);
+
+			if (!status)
+			{
+				errorMessage = "There was an error on adding member";
+			}
+
 			return new JsonResult(new
 			{
 				status = status,
 				errorMessage = errorMessage
 			});
 		}
+        public JsonResult OnGetAddNewGroup(string groupName)
+        {
+            bool status = true;
+            string errorMessage = string.Empty;
+
+			status = _chatGroups.AddChatGroup(groupName);
+
+            if (!status)
+            {
+                errorMessage = "Add failed somehow";
+            }
+
+            return new JsonResult(new
+            {
+                status = status,
+                errorMessage = errorMessage
+            });
+        }
 	}
 }
 

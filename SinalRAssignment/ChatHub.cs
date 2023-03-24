@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Identity.Client;
+using Repository.Entities;
 using Repository.Interface;
 
 namespace SinalRAssignment
@@ -30,14 +31,24 @@ namespace SinalRAssignment
 			await Clients.Group(groupName).SendAsync("ReceiveMessage", user, message);
 		}
 
-		public async Task JoinGroup(string user, string groupName)
+		public async Task AddMember(string groupName, string memberName)
 		{
-			await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+			await Clients.All.SendAsync("NewMemberJoined", memberName);
+		}
+
+		public async Task RemoveMember(string groupName, string memberName)
+		{
+			await Clients.All.SendAsync("MemberRemoved", memberName);
 		}
 
 		public async Task LeaveGroup(string groupName)
 		{
 			await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+		}
+
+		public async Task JoinGroup(string user, string groupName)
+		{
+			await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 		}
 	}
 }
